@@ -25,18 +25,22 @@ This app provides an AI-powered support agent that can:
 * Accept uploaded images for multi-modal support
 * Respond in a clear and helpful way
 
-## Planned Features
+## Features
 
-* Streamlit chat interface
-* Fake flight status lookup
-* Fake booking lookup
-* Baggage allowance checker
-* Refund request simulator
-* Seat change simulator
-* Escalation to human support
-* Image upload for boarding passes or travel screenshots
-* Function-calling workflow
-* Conversation history
+- Streamlit customer support interface
+- Passenger details input
+- Fake flight status lookup
+- Fake booking lookup
+- Baggage allowance checker
+- Refund request simulator
+- Seat change simulator
+- Escalation to human support
+- AI agent with function calling
+- Tool call details display
+- Chat-style conversation history
+- Recent conversation context for follow-up questions
+- Image upload for boarding passes or travel screenshots
+- Multi-modal travel document analysis
 
 ## Tech Stack
 
@@ -118,11 +122,31 @@ Do not upload your real `.env` file to GitHub.
 
 ## Status
 
-In progress.
+Core version completed.
+
+Current version includes:
+
+- Manual support tools
+- AI agent support
+- Function calling
+- Chat history
+- Conversation context
+- Uploaded travel document analysis
 
 ## What I Learned
 
-This section will be updated as I build the project.
+Through this project, I practiced:
+
+- Building a customer-support style LLM application
+- Creating fake structured data for testing AI workflows
+- Writing backend tools that simulate airline support functions
+- Connecting tools to a Streamlit UI
+- Implementing LLM function calling
+- Showing tool call details for transparency
+- Managing chat history with Streamlit session state
+- Passing recent conversation context to an AI agent
+- Adding multi-modal image analysis for uploaded travel documents
+- Keeping API keys safe with environment variables
 
 ## Demo
 
