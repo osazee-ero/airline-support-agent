@@ -130,26 +130,46 @@ with action_col3:
 
 st.subheader("Chat with the Support Agent")
 
-user_message = st.text_area(
-    "Your message",
-    placeholder="Example: Is my flight BA249 delayed?"
-)
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-if st.button("Send Message"):
-    if not user_message:
-        st.warning("Please enter a message before sending.")
-    else:
-        try:
-            with st.spinner("Agent is thinking..."):
-                response = ask_airline_agent(
-                    user_message=user_message,
-                    passenger_name=passenger_name,
-                    booking_reference=booking_reference,
-                    flight_number=flight_number,
-                )
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
 
-            st.markdown("### Agent Response")
-            st.write(response["answer"])
+user_message = st.chat_input("Ask about your flight, booking, baggage, refund, or seat...")
+
+if user_message:
+    st.session_state.messages.append(
+        {
+            "role": "user",
+            "content": user_message,
+        }
+    )
+
+    with st.chat_message("user"):
+        st.write(user_message)
+
+    try:
+        with st.spinner("Agent is thinking..."):
+            response = ask_airline_agent(
+                user_message=user_message,
+                passenger_name=passenger_name,
+                booking_reference=booking_reference,
+                flight_number=flight_number,
+            )
+
+        assistant_answer = response["answer"]
+
+        st.session_state.messages.append(
+            {
+                "role": "assistant",
+                "content": assistant_answer,
+            }
+        )
+
+        with st.chat_message("assistant"):
+            st.write(assistant_answer)
 
             if response["tool_called"]:
                 with st.expander("Tool call details"):
@@ -162,5 +182,19 @@ if st.button("Send Message"):
                     st.write("Tool result:")
                     st.json(response["tool_result"])
 
-        except Exception as error:
-            st.error(f"Something went wrong: {error}")
+    except Exception as error:
+        error_message = f"Something went wrong: {error}"
+
+        st.session_state.messages.append(
+            {
+                "role": "assistant",
+                "content": error_message,
+            }
+        )
+
+        with st.chat_message("assistant"):
+            st.error(error_message)
+
+if st.button("Clear Chat"):
+    st.session_state.messages = []
+    st.rerun()
