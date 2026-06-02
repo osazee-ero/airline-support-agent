@@ -1,5 +1,5 @@
 import streamlit as st
-from src.agent import ask_airline_agent
+from src.agent import ask_airline_agent, analyze_travel_document
 from src.airline_tools import (
     check_flight_status,
     get_booking_details,
@@ -51,6 +51,24 @@ uploaded_file = st.file_uploader(
 
 if uploaded_file:
     st.image(uploaded_file, caption="Uploaded travel document", width=350)
+
+    if st.button("Analyze Uploaded Document"):
+        try:
+            with st.spinner("Analyzing uploaded travel document..."):
+                image_bytes = uploaded_file.getvalue()
+                mime_type = uploaded_file.type
+
+                image_analysis = analyze_travel_document(
+                    image_bytes=image_bytes,
+                    mime_type=mime_type,
+                    user_message="Please analyze this travel document.",
+                )
+
+            st.markdown("### Document Analysis")
+            st.write(image_analysis)
+
+        except Exception as error:
+            st.error(f"Something went wrong while analyzing the image: {error}")
 
 
 st.subheader("Quick Support Tools")

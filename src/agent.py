@@ -1,3 +1,4 @@
+import base64
 import json
 import os
 
@@ -296,6 +297,71 @@ def ask_airline_agent(
         "tool_arguments": tool_arguments,
         "tool_result": tool_result,
     }
+
+def analyze_travel_document(
+    image_bytes: bytes,
+    mime_type: str,
+    user_message: str = "",
+) -> str:
+    """
+    Analyze an uploaded travel document image.
+
+    This can be used for boarding passes, baggage tags, travel screenshots,
+    or airline receipts.
+    """
+
+    client = get_openai_client()
+
+    encoded_image = base64.b64encode(image_bytes).decode("utf-8")
+
+    prompt = f"""
+You are an airline customer support assistant.
+
+Analyze the uploaded travel document image.
+
+The user said:
+{user_message or "No specific question provided."}
+
+Extract any visible travel-related information, such as:
+- Passenger name
+- Airline
+- Flight number
+- Booking reference
+- Departure city
+- Arrival city
+- Date or time
+- Gate
+- Seat
+- Boarding time
+- Baggage details
+
+Important:
+- Only mention information that is visible or reasonably clear.
+- If something is unclear, say that it is unclear.
+- Do not invent missing details.
+- This is a demo app, not a real airline system.
+"""
+
+    response = client.responses.create(
+        model=MODEL,
+        input=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "input_text",
+                        "text": prompt,
+                    },
+                    {
+                        "type": "input_image",
+                        "image_url": f"data:{mime_type};base64,{encoded_image}",
+                    },
+                ],
+            }
+        ],
+    )
+
+    return response.output_text
 
 
 if __name__ == "__main__":
