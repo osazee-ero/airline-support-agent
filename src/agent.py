@@ -179,17 +179,31 @@ def build_user_context(
     passenger_name: str = "",
     booking_reference: str = "",
     flight_number: str = "",
+    chat_history: list[dict] | None = None,
 ) -> str:
     """
-    Combine the user's message with any details entered in the app.
+    Combine the user's message, passenger details, and recent chat history.
     """
+
+    history_text = ""
+
+    if chat_history:
+        recent_messages = chat_history[-6:]
+
+        for message in recent_messages:
+            role = message.get("role", "unknown")
+            content = message.get("content", "")
+            history_text += f"{role}: {content}\n"
 
     return f"""
 Passenger name: {passenger_name or "Not provided"}
 Booking reference: {booking_reference or "Not provided"}
 Flight number: {flight_number or "Not provided"}
 
-User message:
+Recent conversation:
+{history_text or "No previous conversation."}
+
+Latest user message:
 {user_message}
 """
 
@@ -215,6 +229,7 @@ def ask_airline_agent(
     passenger_name: str = "",
     booking_reference: str = "",
     flight_number: str = "",
+    chat_history: list[dict] | None = None,
 ) -> dict:
     """
     Send the user message to the AI agent.
@@ -227,11 +242,12 @@ def ask_airline_agent(
     client = get_openai_client()
 
     user_context = build_user_context(
-        user_message=user_message,
-        passenger_name=passenger_name,
-        booking_reference=booking_reference,
-        flight_number=flight_number,
-    )
+    user_message=user_message,
+    passenger_name=passenger_name,
+    booking_reference=booking_reference,
+    flight_number=flight_number,
+    chat_history=chat_history,
+        )
 
     first_response = client.responses.create(
         model=MODEL,

@@ -157,6 +157,7 @@ if user_message:
                 passenger_name=passenger_name,
                 booking_reference=booking_reference,
                 flight_number=flight_number,
+                chat_history=st.session_state.messages,
             )
 
         assistant_answer = response["answer"]
