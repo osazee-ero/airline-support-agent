@@ -1,5 +1,5 @@
 import streamlit as st
-
+from src.agent import ask_airline_agent
 from src.airline_tools import (
     check_flight_status,
     get_booking_details,
@@ -139,6 +139,28 @@ if st.button("Send Message"):
     if not user_message:
         st.warning("Please enter a message before sending.")
     else:
-        st.info("The AI agent logic will be added soon.")
-        st.write("User message:")
-        st.write(user_message)
+        try:
+            with st.spinner("Agent is thinking..."):
+                response = ask_airline_agent(
+                    user_message=user_message,
+                    passenger_name=passenger_name,
+                    booking_reference=booking_reference,
+                    flight_number=flight_number,
+                )
+
+            st.markdown("### Agent Response")
+            st.write(response["answer"])
+
+            if response["tool_called"]:
+                with st.expander("Tool call details"):
+                    st.write("Tool called:")
+                    st.code(response["tool_called"])
+
+                    st.write("Tool arguments:")
+                    st.json(response["tool_arguments"])
+
+                    st.write("Tool result:")
+                    st.json(response["tool_result"])
+
+        except Exception as error:
+            st.error(f"Something went wrong: {error}")

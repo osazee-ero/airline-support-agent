@@ -261,22 +261,18 @@ def ask_airline_agent(
     tool_result = run_tool(tool_name, tool_arguments)
 
     second_response = client.responses.create(
-        model=MODEL,
-        instructions=SYSTEM_INSTRUCTIONS,
-        input=[
-            {
-                "role": "user",
-                "content": user_context,
-            },
-            function_call,
-            {
-                "type": "function_call_output",
-                "call_id": function_call.call_id,
-                "output": json.dumps(tool_result),
-            },
-        ],
-        tools=TOOLS,
-    )
+    model=MODEL,
+    instructions=SYSTEM_INSTRUCTIONS,
+    previous_response_id=first_response.id,
+    input=[
+        {
+            "type": "function_call_output",
+            "call_id": function_call.call_id,
+            "output": json.dumps(tool_result),
+        }
+    ],
+    tools=TOOLS,
+)
 
     return {
         "answer": second_response.output_text,
