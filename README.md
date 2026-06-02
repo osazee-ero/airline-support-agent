@@ -150,7 +150,7 @@ Through this project, I practiced:
 
 ## Demo
 
-Live demo will be added after deployment.
+Live app: https://airline-support-agent-2pmyjjs67hxmiyv66jgnsq.streamlit.app/
 
 ## Screenshots
 
