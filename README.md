@@ -154,4 +154,5 @@ Live demo will be added after deployment.
 
 ## Screenshots
 
-Screenshots will be added after the app is built.
+![Airline AI Support Agent Screenshot](screenshots/app_screenshot.png)
+
